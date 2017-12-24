@@ -1,0 +1,47 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+version = '1.0'
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Document Service Api Proof of Concept',
+                   'Implementation-Version': version
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.google.api-client:google-api-client:1.20.+'
+    compile 'com.google.oauth-client:google-oauth-client-jetty:1.20.+'
+    compile 'com.google.apis:google-api-services-drive:v2-rev170-1.20.+'
+    compile 'org.springframework:spring-context:4.1.+'
+    compile 'log4j:log4j:1.2.+'
+
+    testCompile 'junit:junit:4.+'
+    testCompile 'org.mockito:mockito-all:1.10.+'
+    testCompile 'org.springframework:spring-test:4.1.+'
+    testCompile 'org.testng:testng:6.8.+'
+}
+
+task testNG(type: Test) {
+    useTestNG {}
+    reports.html.destination = file("$buildDir/reports/testng")
+}
+
+test {
+    reports.html.destination = file("$buildDir/reports/test")
+
+    dependsOn testNG
+
+    // listen to events in the test execution lifecycle
+    beforeTest { descriptor ->
+        logger.lifecycle("Running test: " + descriptor)
+    }
+}
